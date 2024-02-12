@@ -3,12 +3,14 @@ let formEle = document.querySelector("#form_container");
 let inputEle = document.querySelector("#input_add_task");
 let listEle = document.querySelector("#task_data");
 
-formEle.addEventListener("submit", function (e) {
-  e.preventDefault();
+let keys = Object.keys(localStorage);
+if (keys) {
+  for (let key of keys) {
+    createNewTask(localStorage.getItem(key));
+  }
+}
 
-  let task = inputEle.value;
-if(!task) return alert("Please enter value!") 
-
+function createNewTask(task) {
   //create tasks element
   let taskEle = document.createElement("div");
   taskEle.classList.add("tasks");
@@ -60,26 +62,55 @@ if(!task) return alert("Please enter value!")
   inputEle.value = "";
 
   taskEditBtn.addEventListener("click", (e) => {
+    let localValue;
+
+    for (let key of keys) {
+      if (localStorage.getItem(key) === taskInputEle.value) {
+        console.log(key);
+        localValue = key;
+      }
+    }
+
     if (taskEditBtn.innerText.toLowerCase() == "edit") {
       taskEditBtn.innerText = "Save";
       taskInputEle.removeAttribute("readonly");
       taskInputEle.focus();
     } else {
+      console.log(localValue);
       taskEditBtn.innerText = "Edit";
       taskInputEle.setAttribute("readonly", "readonly");
+      localStorage.setItem(`${localValue}`, taskInputEle.value);
     }
   });
 
   taskDeleteBtn.addEventListener("click", (e) => {
     listEle.removeChild(taskEle);
+    for (let key of keys) {
+      if (localStorage.getItem(key) === taskInputEle.value) {
+        localStorage.removeItem(key);
+      }
+    }
   });
 
   taskCheckBoxEle.addEventListener("click", function (e) {
-    
     if (e.target.checked) {
       taskInputEle.style.textDecoration = "line-through";
     } else {
-        taskInputEle.style.textDecoration = "none";
+      taskInputEle.style.textDecoration = "none";
     }
   });
+}
+
+formEle.addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  let task = inputEle.value;
+  if (!task) return alert("Please enter value!");
+
+  //Local Storage
+  let localStorageID = Math.floor(Math.random() * 50);
+
+  localStorage.setItem(localStorageID, task);
+
+  createNewTask(task);
 });
