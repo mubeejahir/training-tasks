@@ -11,21 +11,21 @@ nextBtn.addEventListener("click", function () {
   showSlides((slideCount += 1));
 });
 
-// function showSlides(n) {
-//   let slides = document.getElementsByClassName("slides");
-//   if (n >= slides.length) {
-//     slideCount = 0;
-//   } else if (n < 0) {
-//     slideCount = slides.length - 1;
-//   }
+function showSlides(n) {
+  let slides = document.getElementsByClassName("slides");
+  if (n >= slides.length) {
+    slideCount = 0;
+  } else if (n < 0) {
+    slideCount = slides.length - 1;
+  }
 
-//   for (let i = 0; i < slides.length; i++) {
-//     slides[i].style.display = "none";
-//   }
+  for (let i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";
+  }
 
-//   console.log(slideCount);
-//   slides[slideCount].style.display = "block";
-// }
+  console.log(slideCount);
+  slides[slideCount].style.display = "block";
+}
 
 //dots nav
 
@@ -60,22 +60,22 @@ dots.forEach(function (ele) {
 
 //Auto Nav
 
-function showSlides() {
-  let slides = document.getElementsByClassName("slides");
-  for (let i = 0; i < slides.length; i++) {
-    slides[i].style.display = "none";
-  }
+// function showSlides() {
+//   let slides = document.getElementsByClassName("slides");
+//   for (let i = 0; i < slides.length; i++) {
+//     slides[i].style.display = "none";
+//   }
 
-  if (slideCount >= slides.length) {
-    slideCount = 0;
-  }
-  console.log(slideCount);
-  slides[slideCount].style.display = "block";
-  slideCount++;
-  // setTimeout(showSlides, 2000)
-}
+//   if (slideCount >= slides.length) {
+//     slideCount = 0;
+//   }
+//   console.log(slideCount);
+//   slides[slideCount].style.display = "block";
+//   slideCount++;
+//   // setTimeout(showSlides, 2000)
+// }
 
-let interval = setInterval(showSlides, 2000);
+// let interval = setInterval(showSlides, 2000);
 
 // slides.forEach(function (e) {
 //   console.log(e)

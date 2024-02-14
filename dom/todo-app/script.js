@@ -2,22 +2,27 @@
 let formEle = document.querySelector("#form_container");
 let inputEle = document.querySelector("#input_add_task");
 let listEle = document.querySelector("#task_data");
+let update;
 
 let keys = Object.keys(localStorage);
 if (keys) {
   for (let key of keys) {
-    createNewTask(localStorage.getItem(key));
+    console.log(key);
+    createNewTask(JSON.parse(localStorage.getItem(key)));
   }
 }
 
 function createNewTask(task) {
   //create tasks element
+
+  console.log(task);
   let taskEle = document.createElement("div");
   taskEle.classList.add("tasks");
 
   //create a  checkbox
   let taskCheckBoxEle = document.createElement("input");
   taskCheckBoxEle.setAttribute("type", "checkbox");
+  taskCheckBoxEle.checked = task[0];
 
   taskEle.append(taskCheckBoxEle);
 
@@ -31,7 +36,7 @@ function createNewTask(task) {
   //create input element
   let taskInputEle = document.createElement("input");
   taskInputEle.setAttribute("type", "text");
-  taskInputEle.setAttribute("value", task);
+  taskInputEle.setAttribute("value", task[1]);
   // taskInputEle.type = "text";
   // taskInputEle.value = "A new Task"
   taskInputEle.setAttribute("readonly", "readonly");
@@ -47,7 +52,7 @@ function createNewTask(task) {
   //create a edit button element
   let taskEditBtn = document.createElement("button");
   taskEditBtn.classList.add("edit");
-  taskEditBtn.innerText = "edit";
+  taskEditBtn.innerText = "Edit";
   //create a delete buttton element
   let taskDeleteBtn = document.createElement("button");
   taskDeleteBtn.classList.add("delete");
@@ -62,30 +67,33 @@ function createNewTask(task) {
   inputEle.value = "";
 
   taskEditBtn.addEventListener("click", (e) => {
-    let localValue;
-
-    for (let key of keys) {
-      if (localStorage.getItem(key) === taskInputEle.value) {
-        console.log(key);
-        localValue = key;
+    let keyEdit = Object.keys(localStorage);
+    if (taskEditBtn.innerText === "Edit") {
+      for (let key of keyEdit) {
+        let jsonData = JSON.parse(localStorage.getItem(key));
+        console.log(jsonData);
+        console.log(taskInputEle.value);
+        if (jsonData[1] === taskInputEle.value) {
+          console.log(key);
+          update = key;
+        }
       }
-    }
-
-    if (taskEditBtn.innerText.toLowerCase() == "edit") {
+      console.log(update);
       taskEditBtn.innerText = "Save";
       taskInputEle.removeAttribute("readonly");
       taskInputEle.focus();
     } else {
-      console.log(localValue);
       taskEditBtn.innerText = "Edit";
+      localStorage.setItem(update, JSON.stringify([false, taskInputEle.value]));
+      update = "";
       taskInputEle.setAttribute("readonly", "readonly");
-      localStorage.setItem(`${localValue}`, taskInputEle.value);
     }
   });
 
   taskDeleteBtn.addEventListener("click", (e) => {
+    let keyEdit = Object.keys(localStorage);
     listEle.removeChild(taskEle);
-    for (let key of keys) {
+    for (let key of keyEdit) {
       if (localStorage.getItem(key) === taskInputEle.value) {
         localStorage.removeItem(key);
       }
@@ -93,10 +101,21 @@ function createNewTask(task) {
   });
 
   taskCheckBoxEle.addEventListener("click", function (e) {
+    let keyEdit = Object.keys(localStorage);
+    for (let key of keyEdit) {
+      if (localStorage.getItem(key) === taskInputEle.value) {
+        console.log(key);
+        update = key;
+      }
+    }
     if (e.target.checked) {
       taskInputEle.style.textDecoration = "line-through";
+      localStorage.setItem(update, JSON.stringify([true, taskInputEle.value]));
+      update = "";
     } else {
       taskInputEle.style.textDecoration = "none";
+      localStorage.setItem(update, JSON.stringify([false, taskInputEle.value]));
+      update = "";
     }
   });
 }
@@ -104,13 +123,12 @@ function createNewTask(task) {
 formEle.addEventListener("submit", function (e) {
   e.preventDefault();
 
-  let task = inputEle.value;
-  if (!task) return alert("Please enter value!");
-
+  let task = [false, inputEle.value];
+  if (!task[1]) return alert("Please enter value!");
+  let localStorageID = localStorage.length + 1;
   //Local Storage
-  let localStorageID = Math.floor(Math.random() * 50);
 
-  localStorage.setItem(localStorageID, task);
+  localStorage.setItem(localStorageID, JSON.stringify(task));
 
   createNewTask(task);
 });
