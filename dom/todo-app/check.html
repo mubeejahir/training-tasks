@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    
+    <script>
+      let table = document.createElement("table");
+      let body = document.getElementByTagName("body");
+      let tableRow = document.createElement("tr");
+      let tableData = document.createElement("td");
+      table.setAttribute("border", "1");
+      body.appendChild(table);
+      table.appendChild(tableRow);
+      table.appendChild(tableData);
+      tableRow.innerText = "row 1";
+      tableData.innerText = "data 1";
+    </script>
+  </body>
+</html>

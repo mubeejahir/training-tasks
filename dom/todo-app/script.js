@@ -2,15 +2,17 @@
 let formEle = document.querySelector("#form_container");
 let inputEle = document.querySelector("#input_add_task");
 let listEle = document.querySelector("#task_data");
+let keys = Object.keys(localStorage);
 let update;
 
-let keys = Object.keys(localStorage);
-if (keys) {
-  for (let key of keys) {
-    console.log(key);
-    createNewTask(JSON.parse(localStorage.getItem(key)));
+window.addEventListener("load", () => {
+  if (keys) {
+    for (let key of keys) {
+      console.log(key);
+      createNewTask(JSON.parse(localStorage.getItem(key)));
+    }
   }
-}
+});
 
 function createNewTask(task) {
   //create tasks element
@@ -91,10 +93,14 @@ function createNewTask(task) {
   });
 
   taskDeleteBtn.addEventListener("click", (e) => {
+    e.target.parentElement.parentElement.remove();
+
     let keyEdit = Object.keys(localStorage);
-    listEle.removeChild(taskEle);
+    // listEle.removeChild(taskEle);
     for (let key of keyEdit) {
-      if (localStorage.getItem(key) === taskInputEle.value) {
+      console.log(JSON.parse(localStorage.getItem(key))[1]);
+      //["false,value"]
+      if (JSON.parse(localStorage.getItem(key))[1] === taskInputEle.value) {
         localStorage.removeItem(key);
       }
     }
@@ -102,21 +108,37 @@ function createNewTask(task) {
 
   taskCheckBoxEle.addEventListener("click", function (e) {
     let keyEdit = Object.keys(localStorage);
+
+    let currentValue = e.target.nextElementSibling.childNodes[0];
+
+    //console.log(currentValue)
+
     for (let key of keyEdit) {
-      if (localStorage.getItem(key) === taskInputEle.value) {
-        console.log(key);
-        update = key;
+      let keyValue = JSON.parse(localStorage.getItem(key));
+      if (keyValue[1] === currentValue.value) {
+        console.log(key, keyValue[0], keyValue[1]);
+        if (keyValue[0]) {
+          localStorage.setItem(
+            key,
+            JSON.stringify([false, currentValue.value])
+          );
+          currentValue.style.textDecoration = "none";
+        } else {
+          localStorage.setItem(key, JSON.stringify([true, currentValue.value]));
+
+          currentValue.style.textDecoration = "line-through";
+        }
       }
     }
-    if (e.target.checked) {
-      taskInputEle.style.textDecoration = "line-through";
-      localStorage.setItem(update, JSON.stringify([true, taskInputEle.value]));
-      update = "";
-    } else {
-      taskInputEle.style.textDecoration = "none";
-      localStorage.setItem(update, JSON.stringify([false, taskInputEle.value]));
-      update = "";
-    }
+    // if (e.target.checked) {
+    //   taskInputEle.style.textDecoration = "line-through";
+    //   localStorage.setItem(update, JSON.stringify([true, taskInputEle.value]));
+    //   update = "";
+    // } else {
+    //   taskInputEle.style.textDecoration = "none";
+    //   localStorage.setItem(update, JSON.stringify([false, taskInputEle.value]));
+    //   update = "";
+    // }
   });
 }
 
@@ -129,6 +151,5 @@ formEle.addEventListener("submit", function (e) {
   //Local Storage
 
   localStorage.setItem(localStorageID, JSON.stringify(task));
-
   createNewTask(task);
 });
